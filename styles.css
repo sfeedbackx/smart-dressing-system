@@ -1,0 +1,31 @@
+:root {
+  /* Shared across all three palettes */
+  --navy:        #1C2433;
+  --white:       #FFFFFF;
+  --slate:       #657080;
+  --gold:        #B88A3E;
+  --teal:        #1F6F78;
+  --mist:        #E6EAF0;
+
+  /* Palette 1 */
+  --steel-blue:  #3B566C;
+  --taupe:       #554B49;
+  --gray-blue:   #7B8491;
+  --terracotta:  #C88366;
+  --ice:         #E7F0F7;
+  --cream:       #F8F4EC;   /* also in palette 3 */
+
+  /* Palette 2 */
+  --silver-blue: #AEB6C1;
+  --sage:        #8BAE9C;
+  --sand:        #D4C6B4;
+  --cloud:       #D8DDE3;
+  --light-gray:  #E5E7E9;
+
+  /* Palette 3 */
+  --charcoal:    #403E43;
+  --indigo-gray: #454C62;
+  --slate-dark:  #65717C;
+  --powder:      #B9CADD;
+  --pale-blue:   #DFE7F2;
+}
