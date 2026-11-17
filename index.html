@@ -1,10 +1,122 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Dressing Intelligent</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1c2433">
+  <title>SmartDress — Today's outfit</title>
   <link rel="stylesheet" href="reset.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand-lockup">
+        <p class="brand-name">SmartDressing</p>
+        <span class="brand-caption">Context-aware wardrobe</span>
+      </div>
+      <div class="scenario-bar">
+        <label for="scenario-select-bar">Scenario</label>
+        <select id="scenario-select-bar" class="scenario-select-bar"></select>
+      </div>
+    </header>
 
+    <main>
+      <nav class="screen-navigation" id="screen-navigation" aria-label="Main navigation">
+        <p class="section-label">Navigation · 4 views</p>
+        <div class="screen-navigation-grid">
+          <button class="screen-nav-item is-active" type="button" data-view="today">▣ <span>Today's outfit</span></button>
+          <button class="screen-nav-item" type="button" data-view="replace">⟳ <span>Replace an item</span></button>
+          <button class="screen-nav-item" type="button" data-view="wardrobe">♧ <span>Wardrobe</span></button>
+          <button class="screen-nav-item" type="button" data-view="preferences">⚙ <span>Preferences</span></button>
+        </div>
+      </nav>
+      <section class="view is-active" id="today-view" aria-labelledby="today-title">
+        <div class="intro">
+          <p class="eyebrow">Your wardrobe, ready for the day.</p>
+          <h2 id="today-title">Your outfit today.</h2>
+          <p class="muted">Based on the weather and your schedule.</p>
+        </div>
+
+        <select id="scenario-select" class="select-control scenario-field" aria-hidden="true" tabindex="-1"></select>
+
+        <article class="outfit-card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">Recommendation</p>
+              <h2 id="recommendation-status">Your current selection</h2>
+            </div>
+            <span class="status-badge" id="status-badge">✓ Complete</span>
+          </div>
+          <article class="context-card" aria-live="polite">
+            <div class="context-main">
+              <span id="context-date">Today</span>
+              <strong id="context-summary">—</strong>
+            </div>
+            <div class="context-tags" id="context-tags"></div>
+          </article>
+          <div class="outfit-stage">
+            <div class="outfit-side outfit-side-left" id="outfit-side-left"></div>
+            <div class="outfit-center" id="outfit-center"></div>
+            <div class="outfit-side outfit-side-right" id="outfit-side-right"></div>
+          </div>
+          <div class="explanation" id="explanation"></div>
+        </article>
+
+        <div class="actions">
+          <button class="button button-primary" type="button" id="confirm-button">Save outfit</button>
+          <button class="button button-secondary" type="button" id="another-button">Another option</button>
+        </div>
+      </section>
+
+      <section class="view" id="replace-view" aria-labelledby="replace-title" hidden>
+        <div class="intro">
+          <p class="eyebrow">Replace an item</p>
+          <h2 id="replace-title">Change one item and keep the rest of your outfit.</h2>
+        </div>
+        <div class="context-card compact" id="replace-context"></div>
+        <p class="section-label">1. Choose a category</p>
+        <div class="category-tabs" id="category-tabs"></div>
+        <div class="replace-current" id="replace-current"></div>
+        <p class="section-label">2. Choose from your wardrobe</p>
+        <p class="muted" id="available-count"></p>
+        <div class="alternative-list" id="alternative-list"></div>
+        <div class="actions sticky-actions">
+          <button class="button button-secondary" type="button" id="cancel-replace">Cancel</button>
+          <button class="button button-primary" type="button" id="apply-replace" disabled>Apply</button>
+        </div>
+      </section>
+
+      <section class="view" id="wardrobe-view" aria-labelledby="wardrobe-title" hidden>
+        <div class="intro">
+          <p class="eyebrow">Wardrobe</p>
+          <h2 id="wardrobe-title">Your clothes and accessories.</h2>
+        </div>
+        <div class="wardrobe-list" id="wardrobe-list"></div>
+      </section>
+
+      <section class="view" id="preferences-view" aria-labelledby="preferences-title" hidden>
+        <div class="intro">
+          <p class="eyebrow">Preferences</p>
+          <h2 id="preferences-title">Profile and settings.</h2>
+        </div>
+        <article class="settings-card">
+          <p class="section-label">Preferred style</p>
+          <strong id="preferred-style"></strong>
+          <p class="section-label">Preferred colors</p>
+          <div class="color-list" id="preferred-colors"></div>
+        </article>
+        <article class="settings-card">
+          <p class="section-label">About</p>
+          <p class="muted">Predefined profile and wardrobe for this demo.</p>
+        </article>
+      </section>
+    </main>
+
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/context.js"></script>
+  <script src="js/scoring.js"></script>
+  <script src="js/ui.js?v=7"></script>
+</body>
 </html>
