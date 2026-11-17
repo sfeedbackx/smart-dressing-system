@@ -28,6 +28,7 @@ const wardrobe = [
   {
     id: "gray-wool-sweater",
     name: "Gray wool sweater",
+    image: "assets/gray-wool-sweater.png",
     category: "top",
     color: "gray",
     warmth: "warm",
@@ -40,6 +41,7 @@ const wardrobe = [
   {
     id: "sport-performance-t-shirt",
     name: "Sport performance T-shirt",
+    image: "assets/sport-performance-t-shirt.png",
     category: "top",
     color: "black",
     warmth: "light",
@@ -52,6 +54,7 @@ const wardrobe = [
   {
     id: "beige-chinos",
     name: "Beige chinos",
+    image: "assets/beige-chinos.png",
     category: "bottom",
     color: "beige",
     warmth: "medium",
@@ -64,6 +67,7 @@ const wardrobe = [
   {
     id: "dark-formal-trousers",
     name: "Dark formal trousers",
+    image: "assets/dark-formal-trousers.png",
     category: "bottom",
     color: "navy",
     warmth: "medium",
@@ -76,6 +80,7 @@ const wardrobe = [
   {
     id: "blue-jeans",
     name: "Blue jeans",
+    image: "assets/blue-jeans.png",
     category: "bottom",
     color: "blue",
     warmth: "medium",
@@ -88,6 +93,7 @@ const wardrobe = [
   {
     id: "black-sport-trousers",
     name: "Black sport trousers",
+    image: "assets/black-sport-trousers.png",
     category: "bottom",
     color: "black",
     warmth: "light",
@@ -100,6 +106,7 @@ const wardrobe = [
   {
     id: "navy-waterproof-coat",
     name: "Navy waterproof coat",
+    image: "assets/navy-waterproof-coat.png",
     category: "outerLayer",
     color: "navy",
     warmth: "warm",
@@ -112,6 +119,7 @@ const wardrobe = [
   {
     id: "gray-wool-coat",
     name: "Gray wool coat",
+    image: "assets/gray-wool-coat.png",
     category: "outerLayer",
     color: "gray",
     warmth: "warm",
@@ -124,6 +132,7 @@ const wardrobe = [
   {
     id: "beige-casual-jacket",
     name: "Beige casual jacket",
+    image: "assets/beige-casual-jacket.png",
     category: "outerLayer",
     color: "beige",
     warmth: "medium",
@@ -136,6 +145,7 @@ const wardrobe = [
   {
     id: "lightweight-sport-jacket",
     name: "Lightweight sport jacket",
+    image: "assets/lightweight-sport-jacket.png",
     category: "outerLayer",
     color: "black",
     warmth: "light",
