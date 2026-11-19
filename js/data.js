@@ -158,6 +158,7 @@ const wardrobe = [
   {
     id: "black-formal-shoes",
     name: "Black formal shoes",
+    image: "assets/black-formal-shoes.png",
     category: "shoes",
     color: "black",
     warmth: "medium",
@@ -170,6 +171,7 @@ const wardrobe = [
   {
     id: "white-sneakers",
     name: "White sneakers",
+    image: "assets/white-sneakers.png",
     category: "shoes",
     color: "white",
     warmth: "light",
@@ -182,6 +184,7 @@ const wardrobe = [
   {
     id: "brown-ankle-boots",
     name: "Brown ankle boots",
+    image: "assets/brown-ankle-boots.png",
     category: "shoes",
     color: "brown",
     warmth: "warm",
@@ -194,6 +197,7 @@ const wardrobe = [
   {
     id: "sport-running-shoes",
     name: "Sport running shoes",
+    image: "assets/sport-running-shoes.png",
     category: "shoes",
     color: "gray",
     warmth: "light",

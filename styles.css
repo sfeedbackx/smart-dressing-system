@@ -70,7 +70,10 @@ h2 { color: var(--navy); font-size: 1.35rem; letter-spacing: -.03em; line-height
 }
 .context-card, .settings-card {
   margin-top: 16px; padding: 15px; border: 1px solid var(--line);
-  border-radius: var(--radius); background: var(--soft);
+  border-radius: var(--radius);
+}
+.settings-card{
+  background : var(--soft)
 }
 .context-card.compact { padding: 12px 15px; }
 .context-main { gap: 12px; font-size: .82rem; }
@@ -91,16 +94,13 @@ h2 { color: var(--navy); font-size: 1.35rem; letter-spacing: -.03em; line-height
 .outfit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
 .clothing-card {
   min-height: 118px; padding: 12px; border-radius: 14px; background: var(--soft);
-  display: flex; flex-direction: column; justify-content: space-between;
+  display: flex; flex-direction: column; row-gap: 12px;
 }
 .clothing-image {
-  width: 100%;
+  /* width: 100%; */
   height: 52px;
-  display: grid;
   place-items: center;
   overflow: hidden;
-  border: 1px dashed #cbd3dd;
-  border-radius: 10px;
   background: #eef2f6;
   color: var(--muted);
   font-size: .68rem;
@@ -152,7 +152,7 @@ h2 { color: var(--navy); font-size: 1.35rem; letter-spacing: -.03em; line-height
 .replace-current { margin-top: 14px; padding: 13px; border-radius: 13px; background: var(--soft); }
 .replace-current strong { display: block; margin-top: 3px; color: var(--navy); }
 .alternative-list, .wardrobe-list { display: grid; gap: 9px; }
-.alternative-card, .wardrobe-row { gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 13px; }
+.alternative-card, .wardrobe-row { gap: 16px; padding: 12px; border: 1px solid var(--line); border-radius: 13px; }
 .alternative-card.is-selected { border-color: var(--teal); background: var(--teal-soft); }
 .alternative-card input { accent-color: var(--teal); }
 .item-copy { flex: 1; }
@@ -239,13 +239,13 @@ h1 { font-size: 2rem; font-weight: 500; }
   margin: 0 auto 12px;
   max-width: 272px;
   border: 0;
-  background: #fff0e4;
+  /* background: red; */
 }
 .context-card { border-radius: 16px; }
 .context-main { align-items: flex-start; flex-direction: column; gap: 4px; font-size: .92rem; }
 .context-main strong { font-size: 1rem; }
-.context-tags { margin-top: 8px; }
-.outfit-stage { display: grid; grid-template-columns: 84px minmax(0, 1fr) 84px; gap: 8px; align-items: center; }
+.context-tags { margin-top: 8px;  margin-bottom : 8px; }
+.outfit-stage { display: grid; grid-template-columns: 90px minmax(0, 1fr) 90px; gap: 8px; align-items: center; }
 .outfit-side { display: grid; gap: 10px; }
 .outfit-center { min-width: 0; }
 .outfit-art {

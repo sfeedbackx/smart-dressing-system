@@ -5,6 +5,11 @@ const CATEGORY_LABELS = {
   shoes: "Shoes",
 };
 
+const COLORS = {
+  tealSoft: "#e8f3f3",
+  warningSoft: "#fff7e8"
+}
+
 const ACTIVITY_LABELS = {
   interview: "Interview",
   lecture: "Lecture",
@@ -65,11 +70,15 @@ function formatSituation(situation) {
   const weather = situation.weather.available
     ? `${situation.weather.temperature.temperature}°C · ${situation.precipitation === "rainy" ? "Rain" : "Clear"}`
     : "Weather unavailable";
-  return { eventLabel, weather };
+  console.log(situation.weather.temperature.level)
+  const backgroundColor = situation.weather.temperature.level === "cold" ? COLORS.tealSoft :  situation.weather.temperature.level === "hot" ? COLORS.warningSoft : ""
+
+  return { eventLabel, weather , backgroundColor };
 }
 
 function renderContext(situation) {
   const labels = formatSituation(situation);
+  document.querySelector(".context-card").style.background = labels.backgroundColor
   document.querySelector("#context-summary").textContent = labels.eventLabel;
   document.querySelector("#context-tags").innerHTML = `
     <span class="context-tag">${labels.weather}</span>
@@ -83,9 +92,7 @@ function renderOutfit(recommendation) {
   const renderCard = ([category, item]) => `
     <article class="clothing-card clothing-${category}">
       <div class="clothing-image">${item.image ? `<img src="${item.image}" alt="${item.name}">` : "Add clothing image"}</div>
-      <span class="slot">${CATEGORY_LABELS[category]}</span>
       <strong>${item.name}</strong>
-      <small>${item.formality} · ${item.color}</small>
     </article>
   `;
   const leftCategories = new Set(["top", "bottom"]);
@@ -93,9 +100,11 @@ function renderOutfit(recommendation) {
   const right = entries.filter(([category]) => !leftCategories.has(category));
   document.querySelector("#outfit-side-left").innerHTML = left.map(renderCard).join("");
   document.querySelector("#outfit-side-right").innerHTML = right.map(renderCard).join("");
+  const order = ["top", "shoes", "bottom", "outerLayer"];
+  const sorted = order.map(cat => entries.find(([category]) => category === cat)).filter(Boolean);
   document.querySelector("#outfit-center").innerHTML = `
     <div class="outfit-art">
-      ${entries.map(([, item]) => item.image
+      ${sorted.map(([, item]) => item.image
         ? `<img src="${item.image}" alt="">`
         : `<span class="art-placeholder">${item.name}</span>`).join("")}
     </div>
