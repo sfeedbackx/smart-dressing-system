@@ -3,6 +3,12 @@
 This document defines how the system compares clothing attributes with the
 requirements produced by the interpreted situation.
 
+## Execution layer
+
+Filtering, matching, outfit construction, and scoring execute in backend
+domain services. The frontend must not reproduce these rules or select a
+different outfit from the returned response.
+
 ## Matching process
 
 ```text
@@ -170,4 +176,3 @@ sport activity   → formal shoes must not win only because of color
 
 If no item perfectly matches, the highest-scoring clean alternative may be
 selected and the compromise must be explained to the user.
-

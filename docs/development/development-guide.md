@@ -8,9 +8,9 @@ The prototype uses:
 
 - HTML for the interface structure
 - CSS for the mobile-first visual design
-- vanilla JavaScript for context transformation, scoring, recommendations,
-  and interaction
-- JavaScript data objects for the predefined wardrobe and scenarios
+- vanilla JavaScript for rendering and API interaction
+- Node.js and Express for the backend API
+- JSON files for the predefined wardrobe, profile, and scenario data
 - browser DevTools for debugging and responsive testing
 - Git and GitHub for version control and collaboration
 
@@ -18,16 +18,19 @@ The prototype uses:
 
 ```text
 ihm/
-├── index.html
-├── reset.css
-├── styles.css
-├── .gitignore
-├── js/
-│   ├── data.js
-│   ├── context.js
-│   ├── scoring.js
-│   ├── recommendation.js
-│   └── ui.js
+├── server/
+│   ├── app.js
+│   ├── routes/
+│   ├── controllers/
+│   ├── services/
+│   ├── domain/
+│   └── data/
+├── public/
+│   ├── index.html
+│   ├── reset.css
+│   ├── styles.css
+│   └── js/
+│       └── ui.js
 └── docs/
     ├── context/
     ├── rules/
@@ -52,35 +55,36 @@ styles here.
 Contains the mobile-first layout, components, responsive rules, colors,
 icons, status indicators, and visual states.
 
-### `js/data.js`
+### `server/data/`
 
-Contains predefined data:
+Contains JSON data and repository code that reads it:
 
 - wardrobe items
 - user profile
 - demonstration scenarios
 - agenda events
 
-Data should be kept separate from recommendation logic.
+Data access must remain separate from domain rules. Domain code must not read
+JSON files directly.
 
-### `js/context.js`
+### `server/domain/context.service.js`
 
-Transforms raw context into an interpreted situation:
+Transforms raw context into an interpreted situation on the backend:
 
 ```text
 time + event + weather + user profile → activity + temperature + precipitation + preferences
 ```
 
-### `js/scoring.js`
+### `server/domain/scoring.service.js`
 
-Calculates:
+Calculates on the backend:
 
 - attribute match values
 - item scores
 - compatibility score
 - normalized final outfit score
 
-### `js/recommendation.js`
+### `server/services/recommendation.service.js`
 
 Coordinates the recommendation flow:
 
@@ -88,7 +92,7 @@ Coordinates the recommendation flow:
 situation → requirements → available items → candidate outfits → scores and warnings → selected recommendation
 ```
 
-### `js/ui.js`
+### `public/js/ui.js`
 
 Updates the interface and handles user interaction:
 
@@ -99,8 +103,8 @@ Updates the interface and handles user interaction:
 - item replacement
 - preference display
 
-The UI layer should call recommendation functions rather than duplicate
-recommendation rules.
+The UI layer calls the Express API and renders its response. It must not
+import or duplicate context, matching, scoring, or recommendation rules.
 
 ## Naming conventions
 
@@ -187,20 +191,25 @@ inLaundry
 Avoid mixing equivalent values such as `outer layer`, `outer_layer`, and
 `coat` for the same category.
 
-## Architecture rules
+## N-tier architecture
 
 Keep these responsibilities separate:
 
 ```text
-data → context interpretation → requirements → scoring → recommendation → interface
+presentation → API → application → domain → data
 ```
 
-Recommendation logic must not directly manipulate the DOM. Interface code
-must not reimplement scoring rules.
+The presentation tier renders API responses, selects a static demo scenario,
+and sends its scenario ID with user actions. It does not contain the
+scenario values. The API tier contains Express routes and controllers. The
+application tier orchestrates use cases. The domain tier contains context,
+matching, scoring, fallback, and explanation rules. The data tier reads JSON
+through repositories.
 
-The functions should return explicit results containing the recommendation
-status, selected outfit, score, and warnings. Do not silently hide invalid
-inputs or failed recommendations.
+Recommendation logic must not manipulate the DOM. The backend returns
+explicit results containing the recommendation status, selected outfit,
+situation, score, warnings, and explanation. Invalid inputs and failed
+recommendations must be returned as explicit errors.
 
 ## UI conventions
 
@@ -216,10 +225,10 @@ The interface is mobile-first and touch-friendly:
 ## Development workflow
 
 1. Update the relevant theory document when a rule changes.
-2. Update the data or logic in the appropriate JavaScript module.
-3. Test the affected scenario in the browser.
+2. Update JSON data or the appropriate backend tier.
+3. Test the affected scenario through the API.
 4. Check normal, warning, and blocked states.
-5. Test the mobile layout and touch interactions.
+5. Test frontend rendering and mobile interactions.
 6. Keep unrelated changes out of the same commit.
 
 ## Testing priorities
@@ -241,12 +250,14 @@ Also verify:
 - replacement alternatives stay in the same category
 - warnings explain compromises
 - the same situation produces a stable result
+- the frontend does not recalculate or reinterpret the API response
 
 ## Documentation and collaboration
 
 Use the root `README.md` as the entry point for the project. Keep detailed
 rules in the document dedicated to that rule instead of duplicating them in
-multiple files.
+multiple files. Keep API details in
+[api-contract.md](../architecture/api-contract.md).
 
 When a rule is still undecided, record it in
 [context-deferred-topics.md](../rules/context-deferred-topics.md) rather than silently choosing an implementation detail.

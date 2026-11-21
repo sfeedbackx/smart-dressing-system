@@ -4,6 +4,13 @@ This document defines the basic transformation from raw context to outfit
 requirements. Detailed matching, scoring, compatibility, and fallback rules
 remain to be defined separately.
 
+## Execution layer
+
+This transformation is a backend domain operation. The Express application
+receives raw scenario data, interprets it on the server, and returns the
+resulting situation and requirements in the recommendation response. The
+frontend only renders those values.
+
 ## Transformation
 
 The system first transforms the raw context into an interpreted situation,

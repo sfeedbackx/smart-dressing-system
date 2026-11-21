@@ -1,0 +1,141 @@
+{
+  "rainyInterview": {
+    "id": "rainy-interview",
+    "name": "Rainy interview",
+    "currentTime": "11:00",
+    "agenda": [
+      {
+        "id": "interview",
+        "type": "interview",
+        "startTime": "12:00",
+        "durationMinutes": 60,
+        "endTime": "13:00"
+      }
+    ],
+    "weather": {
+      "temperature": 7,
+      "rainProbability": 80
+    }
+  },
+  "hotLecture": {
+    "id": "hot-lecture",
+    "name": "Hot lecture day",
+    "currentTime": "08:00",
+    "agenda": [
+      {
+        "id": "lecture",
+        "type": "lecture",
+        "startTime": "09:00",
+        "durationMinutes": 120,
+        "endTime": "11:00"
+      }
+    ],
+    "weather": {
+      "temperature": 30,
+      "rainProbability": 0
+    }
+  },
+  "busyAgenda": {
+    "id": "busy-agenda",
+    "name": "Busy agenda",
+    "currentTime": "10:00",
+    "agenda": [
+      {
+        "id": "lecture",
+        "type": "lecture",
+        "startTime": "09:00",
+        "durationMinutes": 120,
+        "endTime": "11:00"
+      },
+      {
+        "id": "interview",
+        "type": "interview",
+        "startTime": "14:00",
+        "durationMinutes": 60,
+        "endTime": "15:00"
+      },
+      {
+        "id": "sport",
+        "type": "sport",
+        "startTime": "18:00",
+        "durationMinutes": 60,
+        "endTime": "19:00"
+      }
+    ],
+    "weather": {
+      "temperature": 18,
+      "rainProbability": 10
+    }
+  },
+  "unavailableClothing": {
+    "id": "unavailable-clothing",
+    "name": "Unavailable clothing item",
+    "currentTime": "07:30",
+    "agenda": [
+      {
+        "id": "lecture",
+        "type": "lecture",
+        "startTime": "09:00",
+        "durationMinutes": 120,
+        "endTime": "11:00"
+      }
+    ],
+    "weather": {
+      "temperature": 9,
+      "rainProbability": 90
+    }
+  },
+  "weatherUnavailable": {
+    "id": "weather-unavailable",
+    "name": "Weather unavailable",
+    "currentTime": "18:00",
+    "agenda": [
+      {
+        "id": "party",
+        "type": "party",
+        "startTime": "20:00",
+        "durationMinutes": 180,
+        "endTime": "23:00"
+      }
+    ],
+    "weather": null
+  },
+  "changingWeather": {
+    "id": "changing-weather",
+    "name": "Changing weather",
+    "currentTime": "08:00",
+    "agenda": [],
+    "weatherStates": [
+      {
+        "id": "cold",
+        "temperature": 7,
+        "rainProbability": 10
+      },
+      {
+        "id": "mild",
+        "temperature": 18,
+        "rainProbability": 10
+      },
+      {
+        "id": "hot",
+        "temperature": 30,
+        "rainProbability": 0
+      }
+    ]
+  },
+  "changingActivity": {
+    "id": "changing-activity",
+    "name": "Changing activity",
+    "currentTime": "08:00",
+    "agenda": [],
+    "weather": {
+      "temperature": 18,
+      "rainProbability": 10
+    },
+    "activityStates": [
+      "lecture",
+      "interview",
+      "sport"
+    ]
+  }
+}

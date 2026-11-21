@@ -162,7 +162,7 @@ h2 { color: var(--navy); font-size: 1.35rem; letter-spacing: -.03em; line-height
 .wardrobe-row .clothing-image { width: 58px; min-width: 58px; height: 58px; }
 .wardrobe-row .status { margin-left: auto; color: var(--teal); font-size: .7rem; font-weight: 700; }
 .wardrobe-row .status.unavailable { color: var(--warning); }
-.sticky-actions { position: sticky; bottom: 70px; padding-top: 10px; background: var(--surface); }
+.sticky-actions {bottom: 70px; padding-top: 10px; background: var(--surface); }
 .settings-card { display: grid; gap: 8px; }
 .color-list { display: flex; flex-wrap: wrap; gap: 7px; }
 .color-pill { padding: 6px 10px; border-radius: 999px; background: var(--teal-soft); color: var(--teal); font-size: .75rem; font-weight: 700; }

@@ -6,9 +6,16 @@ const CATEGORY_LABELS = {
 };
 
 const COLORS = {
-  tealSoft: "#e8f3f3",
-  warningSoft: "#fff7e8"
-}
+  hotSoft: "#c0392b",
+  mildSoft: "#fff7e8",
+  coldSoft: "#e8f1fb",
+};
+
+const TEMP_COLORS = {
+  hot: COLORS.hotSoft,
+  mild: COLORS.mildSoft,
+  cold: COLORS.coldSoft,
+};
 
 const ACTIVITY_LABELS = {
   interview: "Interview",
@@ -19,46 +26,30 @@ const ACTIVITY_LABELS = {
 };
 
 const state = {
-  scenarioId: selectedScenarioId,
+  scenarioId: null,
+  scenarios: [],
+  wardrobe: [],
+  profile: null,
+  recommendation: null,
   activeCategory: "top",
   selectedReplacementId: null,
   outfit: {},
 };
 
-function getScenario() {
-  return Object.values(scenarios).find((scenario) => scenario.id === state.scenarioId);
+async function requestJson(url, options) {
+  const response = await fetch(url, options);
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.error?.message || "The server request failed.");
+  }
+  return body;
 }
 
-function getSituation() {
-  return getScenarioContext(getScenario(), userProfile);
-}
-
-function getScoredItems(situation) {
-  return wardrobe
-    .filter((item) => item.status === "clean")
-    .map((item) => ({
-      ...calculateItemScore(item, situation.requirements, situation.preferences, new Date("2026-11-17")),
-      category: item.category,
-    }));
-}
-
-function createRecommendation() {
-  const situation = getSituation();
-  const scoredItems = getScoredItems(situation);
-  const outfit = {};
-  const scores = {};
-
-  situation.requirements.requiredCategories.forEach((category) => {
-    const candidates = scoredItems
-      .filter((entry) => entry.category === category)
-      .sort((first, second) => second.score - first.score);
-    if (candidates[0]) {
-      outfit[category] = candidates[0].item;
-      scores[category] = candidates[0];
-    }
-  });
-
-  return { situation, outfit, scores, score: calculateOutfitScore(scores, outfit) };
+function showError(error) {
+  document.querySelector("#status-badge").textContent = "⚠ Unavailable";
+  document.querySelector("#status-badge").classList.add("warning");
+  document.querySelector("#explanation").textContent = error.message;
+  document.querySelector("#explanation").classList.add("warning");
 }
 
 function formatSituation(situation) {
@@ -70,15 +61,16 @@ function formatSituation(situation) {
   const weather = situation.weather.available
     ? `${situation.weather.temperature.temperature}°C · ${situation.precipitation === "rainy" ? "Rain" : "Clear"}`
     : "Weather unavailable";
-  console.log(situation.weather.temperature.level)
-  const backgroundColor = situation.weather.temperature.level === "cold" ? COLORS.tealSoft :  situation.weather.temperature.level === "hot" ? COLORS.warningSoft : ""
-
-  return { eventLabel, weather , backgroundColor };
+  return {
+    eventLabel,
+    weather,
+    backgroundColor: TEMP_COLORS[situation.temperature] || COLORS.mildSoft,
+  };
 }
 
 function renderContext(situation) {
   const labels = formatSituation(situation);
-  document.querySelector(".context-card").style.background = labels.backgroundColor
+  document.querySelector(".context-card").style.background = labels.backgroundColor;
   document.querySelector("#context-summary").textContent = labels.eventLabel;
   document.querySelector("#context-tags").innerHTML = `
     <span class="context-tag">${labels.weather}</span>
@@ -87,21 +79,28 @@ function renderContext(situation) {
 }
 
 function renderOutfit(recommendation) {
+  state.recommendation = recommendation;
   state.outfit = recommendation.outfit;
   const entries = Object.entries(recommendation.outfit);
+  console.log(entries)
   const renderCard = ([category, item]) => `
     <article class="clothing-card clothing-${category}">
       <div class="clothing-image">${item.image ? `<img src="${item.image}" alt="${item.name}">` : "Add clothing image"}</div>
       <strong>${item.name}</strong>
+      <small>${item.formality} · ${item.color}</small>
     </article>
   `;
   const leftCategories = new Set(["top", "bottom"]);
-  const left = entries.filter(([category]) => leftCategories.has(category));
-  const right = entries.filter(([category]) => !leftCategories.has(category));
-  document.querySelector("#outfit-side-left").innerHTML = left.map(renderCard).join("");
-  document.querySelector("#outfit-side-right").innerHTML = right.map(renderCard).join("");
+  document.querySelector("#outfit-side-left").innerHTML = entries
+    .filter(([category]) => leftCategories.has(category))
+    .map(renderCard)
+    .join("");
+  document.querySelector("#outfit-side-right").innerHTML = entries
+    .filter(([category]) => !leftCategories.has(category))
+    .map(renderCard)
+    .join("");
   const order = ["top", "shoes", "bottom", "outerLayer"];
-  const sorted = order.map(cat => entries.find(([category]) => category === cat)).filter(Boolean);
+  const sorted = order.map((category) => entries.find(([key]) => key === category)).filter(Boolean);
   document.querySelector("#outfit-center").innerHTML = `
     <div class="outfit-art">
       ${sorted.map(([, item]) => item.image
@@ -110,33 +109,21 @@ function renderOutfit(recommendation) {
     </div>
   `;
 
-  const isWarning = recommendation.score.finalScore < 65 ||
-    (recommendation.situation.precipitation === "rainy" &&
-      recommendation.outfit.outerLayer?.waterResistance !== "waterproof");
   const badge = document.querySelector("#status-badge");
-  badge.textContent = isWarning ? "⚠ Needs attention" : "✓ Complete";
-  badge.classList.toggle("warning", isWarning);
+  const warning = recommendation.status !== "complete";
+  badge.textContent = warning ? "⚠ Needs attention" : "✓ Complete";
+  badge.classList.toggle("warning", warning);
   const explanation = document.querySelector("#explanation");
-  explanation.classList.toggle("warning", isWarning);
-  explanation.textContent = recommendation.situation.weather.available
-    ? recommendation.situation.precipitation === "rainy"
-      ? "An outer layer was added because rain is expected."
-      : recommendation.situation.temperature === "hot"
-        ? "Light pieces were chosen to keep you cool."
-        : "An outfit matching your schedule and the weather was selected."
-    : "Weather is unavailable, so this outfit is based on your schedule only.";
-}
-
-function renderToday() {
-  const recommendation = createRecommendation();
-  renderContext(recommendation.situation);
-  renderOutfit(recommendation);
+  explanation.classList.toggle("warning", warning);
+  explanation.textContent = recommendation.warnings.length
+    ? `${recommendation.explanation} ${recommendation.warnings.join(" ")}`
+    : recommendation.explanation;
 }
 
 function renderScenarios() {
-  const options = Object.values(scenarios).map((scenario) =>
-    `<option value="${scenario.id}">${scenario.name}</option>`,
-  ).join("");
+  const options = state.scenarios
+    .map((scenario) => `<option value="${scenario.id}">${scenario.name}</option>`)
+    .join("");
   document.querySelector("#scenario-select").innerHTML = options;
   document.querySelector("#scenario-select-bar").innerHTML = options;
   document.querySelector("#scenario-select").value = state.scenarioId;
@@ -144,7 +131,7 @@ function renderScenarios() {
 }
 
 function renderWardrobe() {
-  document.querySelector("#wardrobe-list").innerHTML = wardrobe.map((item) => `
+  document.querySelector("#wardrobe-list").innerHTML = state.wardrobe.map((item) => `
     <article class="wardrobe-row">
       <div class="clothing-image">${item.image ? `<img src="${item.image}" alt="${item.name}">` : "Add clothing image"}</div>
       <div class="item-copy"><strong>${item.name}</strong><small>${CATEGORY_LABELS[item.category]} · ${item.color}</small></div>
@@ -154,13 +141,14 @@ function renderWardrobe() {
 }
 
 function renderPreferences() {
-  document.querySelector("#preferred-style").textContent = userProfile.preferredStyle;
-  document.querySelector("#preferred-colors").innerHTML = userProfile.preferredColors
+  document.querySelector("#preferred-style").textContent = state.profile.preferredStyle;
+  document.querySelector("#preferred-colors").innerHTML = state.profile.preferredColors
     .map((color) => `<span class="color-pill">${color}</span>`).join("");
 }
 
 function renderReplacement() {
-  const situation = getSituation();
+  const situation = state.recommendation?.situation;
+  if (!situation) return;
   const current = state.outfit[state.activeCategory];
   const labels = formatSituation(situation);
   document.querySelector("#replace-context").innerHTML =
@@ -172,8 +160,11 @@ function renderReplacement() {
     ? `<div><span class="eyebrow">You are replacing</span><strong>${current.name}</strong></div><span class="muted">The rest stays the same.</span>`
     : "<span class=\"muted\">No item in this category.</span>";
 
-  const alternatives = filterAvailableItems(wardrobe, state.activeCategory);
-  document.querySelector("#available-count").textContent = `${alternatives.length} item${alternatives.length === 1 ? "" : "s"} available · Select one`;
+  const alternatives = state.wardrobe.filter(
+    (item) => item.category === state.activeCategory && item.status !== "dirty" && item.status !== "inLaundry",
+  );
+  document.querySelector("#available-count").textContent =
+    `${alternatives.length} item${alternatives.length === 1 ? "" : "s"} available · Select one`;
   document.querySelector("#alternative-list").innerHTML = alternatives.map((item) => `
     <label class="alternative-card ${item.id === state.selectedReplacementId ? "is-selected" : ""}">
       <input type="radio" name="replacement" value="${item.id}" ${item.id === state.selectedReplacementId ? "checked" : ""}>
@@ -182,6 +173,20 @@ function renderReplacement() {
     </label>
   `).join("");
   document.querySelector("#apply-replace").disabled = !state.selectedReplacementId;
+}
+
+async function loadRecommendation() {
+  try {
+    const recommendation = await requestJson("/api/recommendations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scenarioId: state.scenarioId }),
+    });
+    renderContext(recommendation.situation);
+    renderOutfit(recommendation);
+  } catch (error) {
+    showError(error);
+  }
 }
 
 function showView(viewName) {
@@ -196,6 +201,13 @@ function showView(viewName) {
   if (viewName === "replace") renderReplacement();
 }
 
+async function changeScenario(event) {
+  state.scenarioId = event.target.value;
+  document.querySelector("#scenario-select").value = state.scenarioId;
+  document.querySelector("#scenario-select-bar").value = state.scenarioId;
+  await loadRecommendation();
+}
+
 document.addEventListener("click", (event) => {
   const navItem = event.target.closest("[data-view]");
   if (navItem) showView(navItem.dataset.view);
@@ -207,41 +219,67 @@ document.addEventListener("click", (event) => {
   }
 });
 
-function changeScenario(event) {
-  state.scenarioId = event.target.value;
-  document.querySelector("#scenario-select").value = state.scenarioId;
-  document.querySelector("#scenario-select-bar").value = state.scenarioId;
-  renderToday();
-}
-
 document.querySelector("#scenario-select").addEventListener("change", changeScenario);
 document.querySelector("#scenario-select-bar").addEventListener("change", changeScenario);
-
-document.querySelector("#another-button").addEventListener("click", () => {
-  const current = state.outfit.top;
-  const alternatives = filterAvailableItems(wardrobe, "top").filter((item) => item.id !== current?.id);
-  if (alternatives[0]) state.outfit.top = alternatives[0];
-  renderOutfit({ ...createRecommendation(), outfit: state.outfit });
+document.querySelector("#another-button").addEventListener("click", async () => {
+  const excludedIds = Object.values(state.outfit).map((item) => item.id).filter(Boolean);
+  try {
+    const recommendation = await requestJson("/api/recommendations/alternatives", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scenarioId: state.scenarioId, excludedIds }),
+    });
+    renderContext(recommendation.situation);
+    renderOutfit(recommendation);
+  } catch (error) {
+    showError(error);
+  }
 });
 
 document.querySelector("#confirm-button").addEventListener("click", (event) => {
   event.currentTarget.textContent = "✓ Outfit saved";
 });
-
 document.querySelector("#cancel-replace").addEventListener("click", () => showView("today"));
 document.querySelector("#alternative-list").addEventListener("change", (event) => {
   state.selectedReplacementId = event.target.value;
   renderReplacement();
 });
-document.querySelector("#apply-replace").addEventListener("click", () => {
-  const replacement = wardrobe.find((item) => item.id === state.selectedReplacementId);
-  if (replacement) state.outfit[state.activeCategory] = replacement;
-  state.selectedReplacementId = null;
-  renderOutfit({ ...createRecommendation(), outfit: state.outfit });
-  showView("today");
+document.querySelector("#apply-replace").addEventListener("click", async () => {
+  if (!state.selectedReplacementId) return;
+  try {
+    const recommendation = await requestJson("/api/recommendations/replacements", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        scenarioId: state.scenarioId,
+        category: state.activeCategory,
+        itemId: state.selectedReplacementId,
+      }),
+    });
+    state.selectedReplacementId = null;
+    renderContext(recommendation.situation);
+    renderOutfit(recommendation);
+    showView("today");
+  } catch (error) {
+    showError(error);
+  }
 });
 
-renderScenarios();
-renderToday();
-renderWardrobe();
-renderPreferences();
+async function initialize() {
+  try {
+    [state.scenarios, state.wardrobe, state.profile] = await Promise.all([
+      requestJson("/api/scenarios"),
+      requestJson("/api/wardrobe"),
+      requestJson("/api/profile"),
+    ]);
+    state.scenarioId = state.scenarios[0]?.id;
+    renderScenarios();
+    renderWardrobe();
+    renderPreferences();
+    await loadRecommendation();
+  } catch (error) {
+    showError(error);
+  }
+}
+
+initialize();
