@@ -3,6 +3,12 @@
 This document defines when a recommended outfit can be shown and how the
 system communicates limitations.
 
+## Execution layer
+
+The backend determines recommendation status, critical constraints,
+warnings, and fallback decisions. The frontend displays the returned
+status and messages without deriving them locally.
+
 ## 1. Minimum final score
 
 The final outfit score is between `0` and `100`:
@@ -111,4 +117,3 @@ BLOCKED → a critical constraint failed or the score is below 50
 
 The score measures outfit quality, while critical warnings determine
 whether the outfit is allowed to be recommended as a complete outfit.
-

@@ -103,20 +103,26 @@ references above.
 
 ## Architecture patterns
 
-The implementation guide uses separation of concerns:
+The implementation uses an N-tier architecture:
 
 ```text
-data → context and recommendation logic → UI rendering
+JSON data → data repositories → domain services
+→ application service → Express API → UI rendering
 ```
 
 Use this principle when creating or modifying files:
 
 ```text
-data.js → context.js and scoring.js → recommendation.js → ui.js
+server/data → server/domain → server/services
+→ server/controllers and routes → public/js/ui.js
 ```
 
-The recommendation modules must not manipulate the DOM, and the UI must not
-reimplement recommendation rules.
+Context interpretation, outfit requirements, matching, scoring, fallback
+rules, and explanations execute in the backend. Domain modules must not
+manipulate the DOM.
+
+The frontend must not import domain modules or reimplement recommendation
+rules. It sends HTTP requests to Express and renders the JSON response.
 
 ## When to consult each source
 

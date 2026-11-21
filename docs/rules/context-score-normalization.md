@@ -4,6 +4,12 @@ This document defines how individual item scores and the compatibility
 score are placed on the same scale before calculating the final outfit
 score.
 
+## Execution layer
+
+Score normalization and final score calculation are performed by the
+backend. The API returns the final score and any relevant breakdown for
+display.
+
 ## 1. Normalize the item scores
 
 Each item score is already out of 100. The system calculates the average so
@@ -26,8 +32,6 @@ item average = (80 + 90 + 85) / 3
              = 85/100
 ```
 
-Without division by the number of items, the result would be `255` instead
-of a score on the 0–100 scale.
 
 ## 2. Normalize compatibility
 
@@ -36,15 +40,6 @@ same 0–100 scale:
 
 ```text
 normalized compatibility = (compatibility score / 10) × 100
-```
-
-The multiplication by 100 changes the scale; it does not create an
-additional 100-point bonus:
-
-```text
-0/10  → 0/100
-5/10  → 50/100
-10/10 → 100/100
 ```
 
 ## 3. Apply the weights
@@ -67,4 +62,3 @@ normalized compatibility:  70/100
 
 final score = (85 × 0.90) + (70 × 0.10) = 76.5 + 7 = 83.5/100
 ```
-
